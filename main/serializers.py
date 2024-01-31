@@ -1,11 +1,14 @@
 from rest_framework import serializers
 from .models import Solver, ExInSolver, Categories
+from django.contrib.auth.models import User
 
 
 class SolversSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = Solver
-        fields = ['name', 'cat', 'image', 'full_description', 'author', 'verified']
+        fields = ['name', 'cat', 'image', 'full_description', 'author', 'verified', 'owner']
 
     def create(self, validated_data):
         return Solver.objects.create(**validated_data)
@@ -47,3 +50,11 @@ class ExInSolverSerializer(serializers.ModelSerializer):
         instance.text = validated_data.get('text', instance.text)
         instance.correct_answer = validated_data.get('correct_answer', instance.correct_answer)
         instance.complexity = validated_data.get('complexity', instance.complexity)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    solver = serializers.PrimaryKeyRelatedField(many=True, queryset=Solver.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'solver']

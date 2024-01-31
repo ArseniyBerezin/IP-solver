@@ -1,14 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
-from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'solvers', SolverViewSet, basename='solvers')
+router.register(r'categories', CategoriesViewSet, basename='categories')
+router.register(r'exinsolver', ExInSolverViewSet, basename='exinsolver')
+router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path('api/v1/solvers/', SolverList.as_view()),
-    path('api/v1/solvers/<int:pk>/', SolverDetail.as_view()),
-    path('api/v1/categories/', CategoriesList.as_view()),
-    path('api/v1/categories/<int:pk>', CategoriesDetail.as_view()),
-    path('api/v1/ExInSolver/', ExInSolverList.as_view()),
-    path('api/v1/ExInSolver/<int:pk>', ExInSolverDetail.as_view()),
+    path('', include(router.urls)),
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)
